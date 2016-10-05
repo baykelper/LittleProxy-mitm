@@ -42,9 +42,20 @@ public class Authority {
                 + ", describe proxy purpose here, since Man-In-The-Middle is bad normally.";
     }
 
+
+
     /**
      * Create a parameter object with the given certificate and certificate
      * authority informations
+
+     * @param keyStoreDir
+     * @param alias
+     * @param password
+     * @param commonName
+     * @param organization
+     * @param organizationalUnitName
+     * @param certOrganization
+     * @param certOrganizationalUnitName
      */
     public Authority(File keyStoreDir, String alias, char[] password,
             String commonName, String organization,

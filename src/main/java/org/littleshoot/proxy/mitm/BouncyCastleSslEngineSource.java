@@ -98,6 +98,10 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      *            Generation takes between 50 to 500ms, but only once per
      *            thread, since there is a connection cache too. It's save to
      *            give a null cache to prevent memory or locking issues.
+     * @throws GeneralSecurityException
+     * @throws OperatorCreationException
+     * @throws RootCertificateException
+     * @throws IOException
      */
     public BouncyCastleSslEngineSource(Authority authority,
             boolean trustAllServers, boolean sendCerts,
@@ -126,7 +130,12 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * @param trustAllServers
      * 
      * @param sendCerts
+     * @throws RootCertificateException
+     * @throws GeneralSecurityException
+     * @throws IOException
+     * @throws OperatorCreationException
      */
+
     public BouncyCastleSslEngineSource(Authority authority,
             boolean trustAllServers, boolean sendCerts)
             throws RootCertificateException, GeneralSecurityException,
@@ -293,11 +302,20 @@ public class BouncyCastleSslEngineSource implements SslEngineSource {
      * @param subjectAlternativeNames
      *            a List of the subject alternative names to use in the server
      *            certificate, could be empty, but must not be null
-     * 
+     *
+     *
+     * @return
+     * @throws GeneralSecurityException
+     * @throws OperatorCreationException
+     * @throws IOException
+     * @throws ExecutionException
+     *
      * see org.parosproxy.paros.security.SslCertificateServiceImpl.createCertForHost(String)
      * see org.parosproxy.paros.network.SSLConnector.getTunnelSSLSocketFactory(
      *      String)
      */
+
+
     public SSLEngine createCertForHost(final String commonName,
             final SubjectAlternativeNameHolder subjectAlternativeNames)
             throws GeneralSecurityException, OperatorCreationException,
