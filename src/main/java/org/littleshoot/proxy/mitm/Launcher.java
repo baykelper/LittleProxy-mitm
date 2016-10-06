@@ -1,12 +1,18 @@
 package org.littleshoot.proxy.mitm;
 
-import java.io.File;
-
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.HttpResponse;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.littleshoot.proxy.HttpProxyServerBootstrap;
+import org.littleshoot.proxy.*;
 import org.littleshoot.proxy.impl.DefaultHttpProxyServer;
+import org.littleshoot.proxy.impl.ProxyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
 
 public class Launcher {
 
@@ -27,7 +33,10 @@ public class Launcher {
                     .bootstrapFromFile("./littleproxy.properties")
                     .withPort(port).withAllowLocalOnly(false);
 
-            bootstrap.withManInTheMiddle(new HostNameMitmManager());
+            HostNameMitmManager mgr = new HostNameMitmManager();
+            bootstrap.withManInTheMiddle(mgr);
+
+            bootstrap.withFiltersSource(filtersSource);
 
             System.out.println("About to start...");
             bootstrap.start();
@@ -38,4 +47,62 @@ public class Launcher {
         }
     }
 
+    private static HttpFiltersSource filtersSource = new HttpFiltersSourceAdapter() {
+
+
+        public HttpFilters filterRequest(HttpRequest originalRequest) {
+            return new HttpFiltersAdapter(originalRequest, null);
+        }
+
+        @Override
+        public HttpFilters filterRequest(HttpRequest originalRequest,
+                                         ChannelHandlerContext ctx) {
+
+            // The connect request must bypass the filter! Otherwise the
+            // handshake will fail.
+            //
+            if (ProxyUtils.isCONNECT(originalRequest)) {
+                return new HttpFiltersAdapter(originalRequest);
+            }
+
+            return new HttpFiltersAdapter(originalRequest) {
+
+                /**
+                 * This filter delivers special responses if connection
+                 * limited
+                 */
+                @Override
+                public HttpResponse clientToProxyRequest(
+                        HttpObject httpObject) {
+                    return super.clientToProxyRequest(httpObject);
+                }
+
+                /**
+                 * This proxy expect aggregated chunks only, with https too
+                 */
+                @Override
+                public HttpObject proxyToClientResponse(
+                        HttpObject httpObject) {
+                    if (httpObject instanceof FullHttpResponse) {
+                        return super.proxyToClientResponse(httpObject);
+                    } else {
+                        throw new IllegalStateException(
+                                "Response is not been aggregated");
+                    }
+                }
+            };
+        }
+
+        /** This proxy must aggregate chunks */
+        @Override
+        public int getMaximumResponseBufferSizeInBytes() {
+            return 10 * 1024 * 1024;
+        }
+
+
+        //   @Override
+        //   public int getMaximumResponseBufferSizeInBytes() {
+        //       return 0;
+        //   }
+    };
 }
