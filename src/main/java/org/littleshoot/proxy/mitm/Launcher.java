@@ -62,6 +62,7 @@ public class Launcher {
             // handshake will fail.
             //
             if (ProxyUtils.isCONNECT(originalRequest)) {
+                log.debug(" connect: {} {}",originalRequest.getMethod().name(), originalRequest.getUri());
                 return new HttpFiltersAdapter(originalRequest);
             }
 
@@ -74,6 +75,7 @@ public class Launcher {
                 @Override
                 public HttpResponse clientToProxyRequest(
                         HttpObject httpObject) {
+                    log.debug("  foo: {}",httpObject.getDecoderResult().toString());
                     return super.clientToProxyRequest(httpObject);
                 }
 
@@ -84,8 +86,9 @@ public class Launcher {
                 public HttpObject proxyToClientResponse(
                         HttpObject httpObject) {
                     if (httpObject instanceof FullHttpResponse) {
+                        log.debug(" returning: httpObject {}", (FullHttpResponse)httpObject);
                         return super.proxyToClientResponse(httpObject);
-                    } else {
+                      } else {
                         throw new IllegalStateException(
                                 "Response is not been aggregated");
                     }
