@@ -34,12 +34,12 @@ public class Authority {
         alias = "littleproxy-mitm"; // proxy id
         password = "Be Your Own Lantern".toCharArray();
         organization = "LittleProxy-mitm"; // proxy name
-        commonName = organization + ", describe proxy here"; // MITM is bad
+        commonName = organization + ", screenScraper"; // MITM is bad
                                                              // normally
         organizationalUnitName = "Certificate Authority";
         certOrganization = organization; // proxy name
         certOrganizationalUnitName = organization
-                + ", describe proxy purpose here, since Man-In-The-Middle is bad normally.";
+                + ", 'Trust Me', even though Man-In-The-Middle is bad normally.";
     }
 
 
