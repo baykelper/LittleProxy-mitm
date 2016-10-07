@@ -10,14 +10,14 @@
 	</appender>
 	<appender class="org.apache.log4j.ConsoleAppender" name="stdout">
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-6r %d{ISO8601} %-5p [%t] %c{2} - %m%n" name="ConversionPattern" />
+			<param value="%-6r xx %d{ISO8601} %-5p [%t] %c{2} - %m%n" name="ConversionPattern" />
 		</layout>
 	</appender>
 	<appender class="org.apache.log4j.FileAppender" name="TextFile">
 		<param value="false" name="Append" />
 		<param value="log.txt" name="File" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param value="%-6r %d{ISO8601} %-5p [%t] %c{2} - %m%n" name="ConversionPattern" />
+			<param value="%-6r yy %d{ISO8601} %-5p [%t] %c{2} - %m%n" name="ConversionPattern" />
 		</layout>
 	</appender>
 	<appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
@@ -33,8 +33,13 @@
 	<logger name="org.apache.http.wire">
 		<level value="warn" />
 	</logger>
+
+	<logger name="org.littleshoot.proxy.mitm.GtFilterSource">
+		<level value="debug" />
+	</logger>
+
 	<logger name="org.littleshoot.proxy">
-		<level value="warn" />
+		<level value="info" />
 	</logger>
 
 <!-- 
@@ -58,7 +63,7 @@
 	</logger>
 -->
  	<root>
-		<level value="debug" />
+		<level value="warn" />
 		<appender-ref ref="ASYNC" />
 	</root>
 </log4j:configuration>
